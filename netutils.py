@@ -1,4 +1,10 @@
-def read_line(f):
+addMemberCommand = "REGISTER"
+getMembersCommand = "GETMEMBERS"
+pingCommand = "PING"
+badCommand = "BAD"
+
+
+def readLine(f):
     res = b""
     was_r = False
     while True:
