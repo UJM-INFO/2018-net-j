@@ -27,9 +27,9 @@ class Block:
     def calculateHash(self):
         encodedBlock = (
                 str(self.id) +
-                str(self.data) + 
-                self.prehash + 
-                str(self.nonce)).encode('utf-8')
+                str(self.data) +
+                str(self.nonce) + 
+                self.prehash).encode('utf-8')
         return hashlib.sha256(encodedBlock).hexdigest()
 
     def __repr__(self):
