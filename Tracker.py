@@ -1,14 +1,15 @@
-from socket import socket
+from socket import *
 from threading import Thread
 from netutils import *
 import random 
+import time
 
 SAMPLE_SIZE = 3
 
 class Tracker:
 
     def __init__(self):
-        self.membersList = ['1','5','3','4','4','5','6','8','4','4']
+        self.membersList = ['192.168.2.1:1111']
 
     def startListning(self):
         def acceptAll():
@@ -18,7 +19,25 @@ class Tracker:
             while True:
                 conn, addr = serverSocket.accept()
                 self.handleClient(conn)
-                
+        
+        def pingAll():
+            while True:
+                for mem in self.membersList:
+                    try:
+                        ip = mem.split(':')[0]
+                        port = int (mem.split(':')[1])
+                        conn = create_connection((ip,port))
+                        conn.sendall(b"PING\r\n")
+                        l = readLine(conn)
+                        if l != "PONG":
+                            print("Oh NO!!")
+                        else:
+                            print("Oh Yeah!")
+                    except:
+                        self.membersList.remove(mem)
+                time.sleep(5000*60)
+
+        Thread(target=pingAll).start()
         Thread(target=acceptAll).start()
     
     def handleClient(self,conn):
@@ -40,6 +59,8 @@ class Tracker:
                 conn.sendall((badCommand+"\r\n").encode('UTF-8'))
             conn.close()
         Thread(target=handle).start()
+
+
 if __name__ == "__main__":
     t = Tracker()
     t.startListning()
