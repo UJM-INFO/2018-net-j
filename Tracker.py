@@ -51,7 +51,8 @@ class Tracker:
                 conn.sendall(b"OK\r\n")
                 print(self.membersList)
             elif l == getMembersCommand:
-                sample = [ self.membersList[i] for i in sorted(random.sample(range(len(self.membersList)), SAMPLE_SIZE)) ]
+                sample = [ self.membersList[i] for i in sorted(random.sample(range(len(self.membersList)), 
+                        SAMPLE_SIZE if len(self.membersList) > SAMPLE_SIZE else len(self.membersList))) ]
                 for s in sample:
                     conn.sendall((s+"\r\n").encode('UTF-8'))
                 conn.sendall(b"END\r\n")
