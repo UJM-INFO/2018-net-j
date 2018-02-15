@@ -43,7 +43,8 @@ maximum 10 members
 
 ## Send block 
 #### request 
-`SENDBLOCK BLOCK` 
+`SENDBLOCK`
+`BLOCKDUMP`
 #### response
 `OK`
 *case:* invalid block
@@ -58,9 +59,12 @@ maximum 10 members
 
 ## Get block
 #### request
-`GETBLOCK ID`
+`GETBLOCK`
+`ID`
 #### response
-`BLOCK` as json
+`BLOCKDUMP`
+*case:* not found
+`NONE`
 #### description
 *direction:* member <--> member
 *occurrence:* periodically ask the network for the increment block to complete the chain
