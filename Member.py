@@ -10,6 +10,7 @@ import threading
 import netutils
 import pickle
 import os
+import time
 
 TRACKER_IP = "127.0.0.1"
 TRACKER_PORT = 9876
@@ -19,14 +20,19 @@ class Member:
     CHAIN_PATH = str(os.path.expanduser("~")) + "/.chain/"
     os.makedirs(CHAIN_PATH, exist_ok=True)
 
-    def __init__(self, identity, port=1112):
-        self.path = Member.CHAIN_PATH + identity
+    def __init__(self, port=1112):
+        self.path = Member.CHAIN_PATH + str(port)
         self.port = port
         self.memberList = []
         self.registered = False
         self.blockChain = self.reloadChain() # reloadChain from Disk
-        Timer(10, self.dumpChain).start() # dumpChain every 10 seconds
-        Timer(10, self.sniffBlocks).start() # sniff for new blocks every 10 seconds
+        def loop():
+            self.register() # register client once
+            while True:
+                Thread(target=self.dumpChain).start() # dumpChain every 10 seconds
+                Thread(target=self.sniffBlocks).start() # sniff for new blocks every 10 seconds
+                time.sleep(10)
+        Thread(target=loop).start()
 
     def reloadChain(self):
         try:
@@ -47,6 +53,25 @@ class Member:
         except Exception as e:
             print("cannot register member: ", e)
 
+    def fetchMembers(self):
+        try:
+            conn = create_connection((TRACKER_IP, TRACKER_PORT))
+            conn.sendall(b"GETMEMBERS\r\n")
+            print("SENT: GETMEMBERS")
+            self.memberList = []
+            while True:
+                l = netutils.readLine(conn)
+                if l == "END":
+                    break
+                else:
+                    if (l == '127.0.0.1:' + str(self.port)): # ignore self
+                        continue
+                    self.memberList.append(l)
+            print("RECIEVED MEMBERS: ", self.memberList)
+
+        except Exception as e:
+            print("getmembers error: ", e)
+
     def startListening(self):
         listenerSocket = socket()
         listenerSocket.bind(("localhost", self.port))
@@ -55,7 +80,7 @@ class Member:
         def listenerThread():
             while True:
                 conn, addr = listenerSocket.accept()
-                print("handle connection", conn)
+                print("handle connection", addr)
                 Thread(target=self.handleClient, args=(conn,)).start()
         Thread(target=listenerThread).start()
 
@@ -66,56 +91,93 @@ class Member:
         if l == "PING":
             conn.sendall(b"OK\r\n")
             print("SENT: OK")
-    
+        
+        if l == "SENDBLOCK":
+            blkdump = netutils.readLine(conn)
+            blk = pickle.loads(blkdump)
+            print("RECIVED BLOCK: ", blk)
+            if len(self.blockChain.stack) != blk.id:
+                print("SENT: DROP")
+                conn.sendall(b"DROP\r\n")
+            else:    
+                status = self.blockChain.insertBlock(blk)
+                if status:
+                    print("SENT: OK")
+                    conn.sendall(b"OK\r\n")
+                else:
+                    print("SENT: INVALID")
+                    conn.sendall(b"INVALID\r\n")
+        
+        if l == "GETBLOCK":
+            id = netutils.readLine(conn)
+            id = int(id)
+            print("RECIEVED: ", id)
+            if len(self.blockChain.stack) > id:
+                blkdump = pickle.dumps(self.blockChain.stack[id])
+                conn.sendall(blkdump)
+                conn.sendall(b"\r\n")
+                print("SENT BLOCK: ", self.blockChain.stack[id])
+            else:
+                conn.sendall(b"NONE\r\n")
+                print("SENT: NONE")
+
         conn.close()
-        print("connection closed", conn)
+        print("connection closed")
 
     def sniffBlocks(self):
-        # TODO: fetch latest members
+        self.fetchMembers()    
         for mem in self.memberList:
             ip, port = mem.split(":")
             fetchid = str(len(self.blockChain.stack))
             try:
                 conn = create_connection((ip, port))
                 conn.sendall(b'GETBLOCK\r\n')
+                print("SENT: GETBLOCK")
                 conn.sendall(bytes(fetchid + '\r\n', 'utf-8'))
+                print("SENT: ", fetchid)
                 response = netutils.readLine(conn)
                 conn.close()
                 if response == "NONE":
+                    print("RECIEVED: NONE")
                     continue
                 else:
                     blk = pickle.loads(response)
+                    print("RECIEVED BLOCK: ", blk)
                     status = self.blockChain.insertBlock(blk)
-                    print("block " + fetchid + " sniffed from " + mem + ": " + str(status))
+                    if status:
+                        print("block added!")
+                    else:
+                        print("block ignored!")
             except Exception as e:
                 print("sniffing error: ", e)
 
-
     def broadcastBlock(self, id):
-        # make sure this method is called from a separate thread
-        if isinstance(threading.current_thread(), threading._MainThread):
-            Thread(target=self.broadcastBlock, args=(id,)).start(); return
-        
-        # TODO: fetch members first
+        def broadcasterThread():
+            self.fetchMembers()
+            blkdump = pickle.dumps(self.blockChain.stack[id])
+            for mem in self.memberList:
+                ip, port = mem.split(":")
+                try:
+                    conn = create_connection((ip, port))
+                    conn.sendall(b'SENDBLOCK\r\n')
+                    print("SENT: SENDBLOCK")
+                    conn.sendall(blkdump)
+                    conn.sendall(b"\r\n")
+                    print("SENT BLOCK:", self.blockChain.stack[id])
+                    response = netutils.readLine(conn)
+                    print("RECIVED: ", response)
+                    conn.close()
+                    self.registered = True
+                except Exception as e:
+                    print("broadcast error: ", e)
 
-        blkdump = pickle.dumps(self.blockChain.stack[id])
-        for mem in self.memberList:
-            ip, port = mem.split(":")
-            try:
-                conn = create_connection((ip, port))
-                conn.sendall(b'SENDBLOCK\r\n')
-                conn.sendall(blkdump)
-                response = netutils.readLine(conn)
-                print("broadcast to " + mem + " : " + response)
-                conn.close()
-                self.registered = True
-            except Exception as e:
-                print("broadcast error: ", e)
+        Thread(target=broadcasterThread).start()
 
 
 
 if __name__ == "__main__":
-    mem = Member("1")
-    mem.register()
+    from random import randint
+    mem = Member(randint(1000, 8999))
     mem.startListening()
-    mem.broadcastBlock(0)
+    #mem.blockChain.createBlock("new block 1")
+    #mem.blockChain.createBlock("new block 2")

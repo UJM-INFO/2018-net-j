@@ -20,4 +20,7 @@ def readLine(f):
         else:
             was_r = False;
             res += b;
-    return res.decode("utf-8")
+    try:
+        return res.decode("utf-8")
+    except:
+        return res # sent as binary?
