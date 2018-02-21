@@ -9,7 +9,7 @@ SAMPLE_SIZE = 3
 class Tracker:
 
     def __init__(self):
-        self.membersList = ['192.168.2.1:1111']
+        self.membersList = []
 
     def startListning(self):
         def acceptAll():
@@ -47,7 +47,8 @@ class Tracker:
             print(l)
             if l == addMemberCommand:
                 addr = readLine(conn)
-                self.membersList.append(addr)
+                if addr not in self.membersList:
+                    self.membersList.append(addr)
                 conn.sendall(b"OK\r\n")
                 print(self.membersList)
             elif l == getMembersCommand:
