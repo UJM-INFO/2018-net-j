@@ -22,20 +22,24 @@ class Tracker:
         
         def pingAll():
             while True:
+                print("debug mes: start new ping cycle")
                 for mem in self.membersList:
                     try:
+                        
                         ip = mem.split(':')[0]
                         port = int (mem.split(':')[1])
+                        print("debug mes: ping member:",ip,port)
                         conn = create_connection((ip,port))
                         conn.sendall(b"PING\r\n")
                         l = readLine(conn)
                         if l != "PONG":
-                            print("Oh NO!!")
+                            print("debug mes: ping member:",ip,port," bad response: ",l)
                         else:
-                            print("Oh Yeah!")
+                            print("debug mes: ping member:",ip,port," good response: ",l)
                     except:
+                        print("debug mes: ping member:",ip,port," Exception ")
                         self.membersList.remove(mem)
-                time.sleep(5000*60)
+                time.sleep(10000)
 
         Thread(target=pingAll).start()
         Thread(target=acceptAll).start()
@@ -44,13 +48,15 @@ class Tracker:
         def handle():
             #print("handle client")
             l = readLine(conn)
-            print(l)
+            #print(l)
             if l == addMemberCommand:
                 addr = readLine(conn)
                 if addr not in self.membersList:
                     self.membersList.append(addr)
+                    print("debug mes: add member:",addr)
                 conn.sendall(b"OK\r\n")
-                print(self.membersList)
+                
+                
             elif l == getMembersCommand:
                 sample = [ self.membersList[i] for i in sorted(random.sample(range(len(self.membersList)), 
                         SAMPLE_SIZE if len(self.membersList) > SAMPLE_SIZE else len(self.membersList))) ]
