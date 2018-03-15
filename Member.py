@@ -4,7 +4,7 @@
 #
 
 from Chain import Chain
-from socket import socket, create_connection
+from socket import socket, create_connection, gethostname, gethostbyname_ex
 from threading import Thread, Timer
 import threading
 import netutils
@@ -12,8 +12,10 @@ import pickle
 import os
 import time
 
-TRACKER_IP = "127.0.0.1"
+TRACKER_IP = "192.168.1.3"
 TRACKER_PORT = 9876
+
+MY_IP = "192.168.1.12"
 
 class Member:
     
@@ -26,13 +28,19 @@ class Member:
         self.memberList = []
         self.registered = False
         self.blockChain = self.reloadChain() # reloadChain from Disk
+
+    def runLoops(self):
+        self.isLoop = True
         def loop():
             self.register() # register client once
-            while True:
+            while True and self.isLoop: 
                 Thread(target=self.dumpChain).start() # dumpChain every 10 seconds
                 Thread(target=self.sniffBlocks).start() # sniff for new blocks every 10 seconds
-                time.sleep(10)
+                time.sleep(30)
         Thread(target=loop).start()
+    
+    def stopLoops(self):
+        self.isLoop = False
 
     def reloadChain(self):
         try:
@@ -47,7 +55,7 @@ class Member:
         try:
             conn = create_connection((TRACKER_IP, TRACKER_PORT))
             conn.sendall(b'REGISTER\r\n') # TODO: send network ip?
-            conn.sendall(bytes('127.0.0.1:' + str(self.port) + '\r\n', 'utf-8')) 
+            conn.sendall(bytes(str(self.port) + '\r\n', 'utf-8')) 
             conn.close()
             self.registered = True
         except Exception as e:
@@ -64,7 +72,7 @@ class Member:
                 if l == "END":
                     break
                 else:
-                    if (l == '127.0.0.1:' + str(self.port)): # ignore self
+                    if (l == MY_IP + ':' + str(self.port)): # ignore self
                         continue
                     self.memberList.append(l)
             print("RECIEVED MEMBERS: ", self.memberList)
@@ -74,7 +82,7 @@ class Member:
 
     def startListening(self):
         listenerSocket = socket()
-        listenerSocket.bind(("localhost", self.port))
+        listenerSocket.bind((MY_IP, self.port))
         listenerSocket.listen()
         print("socket is listening", self.port )
         def listenerThread():
@@ -178,6 +186,7 @@ class Member:
 if __name__ == "__main__":
     from random import randint
     mem = Member(randint(1000, 8999))
+    mem.runLoops()
     mem.startListening()
     #mem.blockChain.createBlock("new block 1")
     #mem.blockChain.createBlock("new block 2")
