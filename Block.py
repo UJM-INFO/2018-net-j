@@ -9,7 +9,7 @@ import hashlib
 
 class Block:
 
-    DIFFICULTY = 5
+    DIFFICULTY = 4
 
     def __init__(self, id, data, prehash):
         self.id = id
