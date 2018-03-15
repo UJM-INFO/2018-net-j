@@ -4,7 +4,9 @@ from netutils import *
 import random 
 import time
 
-SAMPLE_SIZE = 3
+tracker_ip = '10.42.0.226'
+tracker_port = 9876
+max_member_sample_size = 3
 
 class Tracker:
 
@@ -14,7 +16,7 @@ class Tracker:
     def startListning(self):
         def acceptAll():
             serverSocket = socket()
-            serverSocket.bind(('192.168.1.3',9876))
+            serverSocket.bind((tracker_ip,tracker_port))
             serverSocket.listen()
             while True:
                 conn, addr = serverSocket.accept()
@@ -27,7 +29,7 @@ class Tracker:
                     try:
                         ip = mem.split(':')[0]
                         port = int (mem.split(':')[1])
-                        print("debug mes: ping member:",ip,port)
+                        print("debug mes: start ping member:",ip,port)
                         conn = create_connection((ip,port))
                         conn.sendall(b"PING\r\n")
                         l = readLine(conn)
@@ -36,7 +38,7 @@ class Tracker:
                         else:
                             print("debug mes: ping member:",ip,port," good response: ",l)
                     except:
-                        print("debug mes: ping member:",ip,port," Exception ")
+                        print("debug mes: ping member:",ip,port," Member timeout, Deleting member!")
                         self.membersList.remove(mem)
                 time.sleep(60)
 
@@ -45,7 +47,7 @@ class Tracker:
     
     def handleClient(self,conn, ip):
         def handle():
-            #print("handle client")
+            
             l = readLine(conn)
             #print(l)
             if l == addMemberCommand:
@@ -58,7 +60,7 @@ class Tracker:
                 
             elif l == getMembersCommand:
                 sample = [ self.membersList[i] for i in sorted(random.sample(range(len(self.membersList)), 
-                        SAMPLE_SIZE if len(self.membersList) > SAMPLE_SIZE else len(self.membersList))) ]
+                        max_member_sample_size if len(self.membersList) > max_member_sample_size else len(self.membersList))) ]
                 for s in sample:
                     conn.sendall((s+"\r\n").encode('UTF-8'))
                 conn.sendall(b"END\r\n")
