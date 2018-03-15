@@ -14,7 +14,7 @@ class Tracker:
     def startListning(self):
         def acceptAll():
             serverSocket = socket()
-            serverSocket.bind(('localhost',9876))
+            serverSocket.bind(('192.168.1.3',9876))
             serverSocket.listen()
             while True:
                 conn, addr = serverSocket.accept()
@@ -25,21 +25,20 @@ class Tracker:
                 print("debug mes: start new ping cycle")
                 for mem in self.membersList:
                     try:
-                        
                         ip = mem.split(':')[0]
                         port = int (mem.split(':')[1])
                         print("debug mes: ping member:",ip,port)
                         conn = create_connection((ip,port))
                         conn.sendall(b"PING\r\n")
                         l = readLine(conn)
-                        if l != "PONG":
+                        if l != "OK":
                             print("debug mes: ping member:",ip,port," bad response: ",l)
                         else:
                             print("debug mes: ping member:",ip,port," good response: ",l)
                     except:
                         print("debug mes: ping member:",ip,port," Exception ")
                         self.membersList.remove(mem)
-                time.sleep(10000)
+                time.sleep(60)
 
         Thread(target=pingAll).start()
         Thread(target=acceptAll).start()
@@ -56,7 +55,6 @@ class Tracker:
                     self.membersList.append(addr)
                     print("debug mes: add member:",addr)
                 conn.sendall(b"OK\r\n")
-                
                 
             elif l == getMembersCommand:
                 sample = [ self.membersList[i] for i in sorted(random.sample(range(len(self.membersList)), 
