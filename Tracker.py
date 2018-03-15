@@ -18,7 +18,7 @@ class Tracker:
             serverSocket.listen()
             while True:
                 conn, addr = serverSocket.accept()
-                self.handleClient(conn)
+                self.handleClient(conn, addr[0])
         
         def pingAll():
             while True:
@@ -44,13 +44,14 @@ class Tracker:
         Thread(target=pingAll).start()
         Thread(target=acceptAll).start()
     
-    def handleClient(self,conn):
+    def handleClient(self,conn, ip):
         def handle():
             #print("handle client")
             l = readLine(conn)
             #print(l)
             if l == addMemberCommand:
-                addr = readLine(conn)
+                port = readLine(conn)
+                addr = ip + ":" + port
                 if addr not in self.membersList:
                     self.membersList.append(addr)
                     print("debug mes: add member:",addr)
