@@ -15,7 +15,7 @@ import time
 TRACKER_IP = "192.168.1.3"
 TRACKER_PORT = 9876
 
-MY_IP = "192.168.1.12"
+MY_IP = "192.168.1.3"
 
 class Member:
     
