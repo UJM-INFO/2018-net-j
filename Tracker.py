@@ -4,7 +4,7 @@ from netutils import *
 import random 
 import time
 
-tracker_ip = '10.42.0.226'
+tracker_ip = '192.168.1.3'
 tracker_port = 9876
 max_member_sample_size = 3
 
