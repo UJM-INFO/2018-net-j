@@ -33,7 +33,7 @@ class Block:
         return hashlib.sha256(encodedBlock).hexdigest()
 
     def __repr__(self):
-        return "<block " + str(self.id) + " " + self.hash[-7:] + ">"
+        return "<block " + str(self.id) + " " + self.data + ">"
 
 
 if __name__ == "__main__":
