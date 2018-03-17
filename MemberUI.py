@@ -40,8 +40,9 @@ btn_run = tk.Button(frm1, text="Stop Loops", command=click_stop); btn_run.pack(s
 
 def click_create():
     blk = mem.blockChain.createBlock(txt_data.get(1.0, tk.END))
-    if blk!=-1:
+    if blk != -1:
         mem.broadcastBlock(blk.id)
+            
 
 btn_create = tk.Button(frm1, text="Create Block", command=click_create); btn_create.pack(side=tk.LEFT)
 

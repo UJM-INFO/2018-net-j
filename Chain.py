@@ -36,6 +36,7 @@ class Chain:
             return False
         # check user balance
         if not self.checkBalance(block.data):
+            print("Chaeck balance error!")
             return False
         self.stack.append(block)
         return True
