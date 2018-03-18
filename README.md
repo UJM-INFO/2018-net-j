@@ -1,4 +1,11 @@
 # 2018-net-j
+
+# Members of the project 
+ 1. **MUAZ TWATY**
+ 2. **ABOUD ZAKARYA**
+ 3. **MEHDI ZARRIA**
+ 4. **MOHAMMED BELAIHOU**
+ 
 # Subject description
 
 The project consists on developing a protocol using the Block Chain logic to stock and transmit transactions between different types of users (miners or simple users) and the P2P protocol to insure the communication between the difference entities.
