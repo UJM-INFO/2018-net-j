@@ -26,7 +26,7 @@ Our protocol is built with the following bricks:
 **The tracker**: is the entity that contains the list of connecting member on the network, by members we nominate the miners, and members having the block chain. The Tracker make a ping call for each member on the list with a period of 1 minute to check its availability on the network, in the case that a member is disconnected, he will be dropt from the list.
 
 **The member**: In practice, the member can be a simple user, a miner or a member having the chain, for the simplicity purpose, we considered all the members as miners. A member can do send two commands to the tracker, the first one is to **ask the tracker to add him in the list of connected members, and the second one is to ask the tracker of a list of connected members to make a transaction**. 
-In addition, a member do the following functionalities: za
+In addition, a member do the following functionalities:
  1. **Sniff new Blocks**: The member listen in the network, if there is a new block created by a member and has been sent in the network, in that case, the member add the block to his chain. Two case can be happen, The member added a new block, or a duplicated block, for the last case, every member make a dumpChain to drop the duplicated block every 10 secondes.
  2. **Send Blocks**: A member can ask other for specific blocks, each block has an ID, if a member send to network the id\_last of the last block he has in the chain, and if another member has blocks having an ID greater that id\_last, he send theme.
  3. **Get Blocks**: When a member get the new blocks, he add theme to the stack, if they are new blocks he add theme to the chain, if not he drop theme.
