@@ -44,4 +44,4 @@ After the creation, the id of the new block is communicated in the network. The 
 
 If a member is disconnected and reconnected, he inform the tracker, and ask it for a list of members in order to synchronize the block (check if there is new block created)
 
-At this rate we described the each element of our protocol, and the interaction between those elements.
+At this stage, we described each element of our protocol, and the interaction between those elements.
