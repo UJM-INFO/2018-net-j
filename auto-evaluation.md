@@ -14,6 +14,7 @@ In the following table we will list the different functionalities that our proto
 |Validate a received block         |OK|
 |Add the block to the Chain          |OK|
 |drop a duplicated/non valid block          |OK|
+|Public/Private Key          |KO|
 
 # Initial vs Current objectives
 
