@@ -2,7 +2,7 @@
 
 In the following table we will list the different functionalities that our protocol should contains, and the state of each function
 
-|                |State                          |
+|Functions                |State                          |
 |----------------|-------------------------------|
 |Create Member|                  OK     |
 |Add member to the tracker         |OK       |
