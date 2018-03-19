@@ -21,25 +21,33 @@ Our initial objective was to build a protocol assuring basic functionalities, an
 
 # Members organisation
 
-**MUAZ TWATY**: x hours
+**MUAZ TWATY**:
 
- - task 1
- - task2
+ - Synchronization of the member list in the tracker
+ - Create new block
+ - Validate a received block
+ - Listening to the network
 
-**ABOUD ZAKARYA**: x hours
+**ABOUD ZAKARYA**: 
 
- - task 1
- - task2
+ - GUI
+ - Create the member
+ - Development of the hashing function
+ - Get blocks from other members
+ - Handle the memeber commands
 
-**MEHDI ZARRIA**: x hours
+**MEHDI ZARRIA**: 
 
- - task 1
- - task2
+ - Validate a received block
+ - Add the block to the chain
+ - Send a new block in the network
 
-**MOHAMMED BELAIHOU**: x hours
+**MOHAMMED BELAIHOU**: 
 
- - task 1
- - task2
+ - Add members to the tracker
+ - Get member list from the tracker
+ - Drop duplicated/non valid blocks
+
 
 # Good Development Practices
 
@@ -78,17 +86,4 @@ Our initial objective was to build a protocol assuring basic functionalities, an
 |document how to use, compile, test and start your projec|OK|
 |document how to understand and continue your project|OK|
 
-# Difficulties we faced
 
-During this project, the difficulties that we faced are the following:
-
- 1. It took us a while to model our protocol, and understand the
-    interaction between its entities
- 2. Transform the ideas into code lines was a difficulty for some
-    members of the team
-
-# Lessons wou learned
-During this project, the lessonswe learnt are the following:
-
- 1. Applied the theoretical knowledge that we studied.
- 2.  Familiarize with the python development
