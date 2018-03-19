@@ -17,7 +17,26 @@ A Block Chain protocol uses different entities to run properly: Tracker, Members
 
 # Runing the project
 
+To run the project locally change **TRACKER_IP** and **MY_IP** to **localhost** in **Member.py** file.
+Then run the **tracker.py** and the **MemberUI.py** files
 
+what the buttons do in MemberUI:
+
+Run member:
+- sends REGISTER to the tracker Tracker
+- loads the block chain from hard disk if exists
+- runs a loop for sniffing for new Blocks
+- runs a loop for saving the blockChain to hard disk
+- Opens port and starts listening for clients
+
+Stop loops:
+- pause all the running loops mentioned above (for test purposes)
+
+Create Block:
+- creates a block and broadcasts it to other members fetched from the Tracker
+
+Print chain:
+- outputs the block chain
 
 # Description of the architecture
 
