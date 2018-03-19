@@ -10,9 +10,9 @@
 
 The project consists on developing a protocol using the Block Chain logic to stock and transmit transactions between different types of users (miners or simple users) and the P2P protocol to insure the communication between the difference entities.
 
-The Block chain protocol became more famous since the development of the crypto currency; the latter uses the block chain to stock transaction done between users and to mine new currency using a hashing algorithm. In general, the data type transmitted is text type, but it can be extended to other types such images, voice …
+The Block chain protocol became more famous since the development of the crypto currency, the latter uses the block chain to stock transactions between users, and to mine new currency using a hashing algorithm. In general, the data type transmitted is text, but it can be extended to other types such as images, voice …
 
-A Block Chain protocol uses different entities to run properly: Tracker, Members list and the chain, in the following paragraphs we will describe each entity.
+A Block Chain protocol uses different entities to run properly: Tracker, Members and the chain, in the following paragraphs we will describe each entity.
 
 
 # Runing the project
