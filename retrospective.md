@@ -11,3 +11,23 @@ In addition to that, one of the problem that prevent us from respecting the plan
 Those factors were the causes of the non-correlation between the expected and real planning.
 
 When the development of a function is done, we go through a test process, to make sure that the function run well, the type of test that we made are unit tests, when a function succeed the test, it will be pushed to the repository.
+
+# Difficulties we faced
+
+During this project, the difficulties that we faced are the following:
+
+ 1. It took us a while to model our protocol, and understand the
+    interaction between its entities
+ 2. Transform the ideas into code lines was a difficulty for some
+    members of the team
+ 3. Synchronizing between the different projects we have to submit
+
+# Lessons wou learned
+During this project, the lessons we learnt are the following:
+
+ 1. Applied the theoretical knowledge that we studied.
+ 2. Familiarize with the python development
+ 
+ # What you would do differently
+ Starting the project in an early stage, could be more benificial 
+ 
